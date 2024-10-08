@@ -10,6 +10,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@touch4it/ical-timezones": "^1.9.0",
     "@vueuse/core": "^11.1.0",
     "axios": "^1.7.7",
     "ical-generator": "^8.0.0",
