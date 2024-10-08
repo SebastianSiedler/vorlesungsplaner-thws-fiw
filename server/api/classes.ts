@@ -28,6 +28,7 @@ export default defineEventHandler(async (event) => {
   const calendar = ical({
     name: "Vorlesungsplan",
     timezone: "Europe/Berlin",
+    description: "Vorlesungsplan für die angegebenen Klassen",
   });
 
   // Fetch events for each class ID
