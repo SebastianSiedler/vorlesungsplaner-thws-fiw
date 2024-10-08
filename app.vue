@@ -36,12 +36,19 @@
         </div>
 
         <!-- Textbox to copy ical url -->
-        <v-text-field readonly>
-          {{ icalUrl }}
-        </v-text-field>
+        <div>
+          <span> {{ icalUrl }} </span>
+          <v-icon @click="copyIcalUrl"> mdi-content-copy </v-icon>
+        </div>
 
         <!-- Button to download iCal -->
-        <v-btn @click="downloadCalendar">Download iCal</v-btn>
+        <v-btn
+          @click="downloadCalendar"
+          color="primary"
+          append-icon="mdi-download"
+        >
+          Download iCal
+        </v-btn>
 
         <!-- Vuetify Data Table to show events -->
         <v-data-table
@@ -121,7 +128,7 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 import { client, type Event } from "./fiwClient";
-import { useAsyncState } from "@vueuse/core";
+import { useAsyncState, useClipboard } from "@vueuse/core";
 import { VDataTable } from "vuetify/components";
 
 // State
@@ -160,6 +167,14 @@ const icalUrl = computed(() => {
   );
 });
 
+const { text, copy, copied, isSupported } = useClipboard({ source: icalUrl });
+
+const copyIcalUrl = async () => {
+  await copy();
+  if (copied.value) {
+    console.log("Copied to clipboard");
+  }
+};
 const downloadCalendar = () => {
   window.location.href = icalUrl.value;
 };
