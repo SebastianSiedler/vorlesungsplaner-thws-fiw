@@ -44,8 +44,8 @@ export default defineEventHandler(async (event) => {
           subEvent.id
         );
         const eventDetails: ICalEventData = {
-          start: new Date(detailedSubEvent.startTime),
-          end: new Date(detailedSubEvent.endTime),
+          start: detailedSubEvent.startTime,
+          end: detailedSubEvent.endTime,
           summary: eventData.name,
           description: `Dozent: ${eventData.lecturerNames}`,
           location: detailedSubEvent.rooms,
