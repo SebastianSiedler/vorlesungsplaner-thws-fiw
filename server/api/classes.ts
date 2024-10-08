@@ -2,6 +2,7 @@ import { defineEventHandler, getQuery } from "h3";
 import ical, { ICalEventData } from "ical-generator";
 import { client } from "~/fiwClient"; // Importiere die client.ts Datei
 import z from "zod";
+import { getVtimezoneComponent } from "@touch4it/ical-timezones";
 
 export default defineEventHandler(async (event) => {
   const querySchema = z.object({
@@ -24,7 +25,11 @@ export default defineEventHandler(async (event) => {
   // Create a new iCal instance
   const calendar = ical({
     name: "Vorlesungsplan",
-    timezone: "Europe/Berlin",
+    // timezone: "Europe/Berlin",
+    timezone: {
+      name: "Europe/Berlin",
+      generator: getVtimezoneComponent,
+    },
     description: "Vorlesungsplan für die angegebenen Klassen",
     prodId: {
       company: "THWS Student",
@@ -51,6 +56,8 @@ export default defineEventHandler(async (event) => {
           // Add each sub-event to the calendar
           subEventDetails.forEach((detailedSubEvent) => {
             const eventDetails: ICalEventData = {
+              // start: new Date(detailedSubEvent.startTime).toUTCString(),
+              // end: new Date(detailedSubEvent.endTime).toUTCString(),
               start: detailedSubEvent.startTime,
               end: detailedSubEvent.endTime,
               summary: eventData.name,
