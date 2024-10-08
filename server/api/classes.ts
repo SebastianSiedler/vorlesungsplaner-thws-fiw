@@ -57,6 +57,7 @@ export default defineEventHandler(async (event) => {
               description: `Dozent: ${eventData.lecturerNames}`,
               location: detailedSubEvent.rooms,
               url: eventData.icalUrl.href,
+              timezone: "Europe/Berlin",
             };
 
             calendar.createEvent(eventDetails);
