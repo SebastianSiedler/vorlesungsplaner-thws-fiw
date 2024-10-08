@@ -3,16 +3,14 @@
     <div>
       <div class="">Selected Events</div>
       <v-list>
-        <v-list-item v-for="event in selectedEvents" :key="event.id">
+        <v-list-item v-for="event in selectedEvents.values()" :key="event.id">
           {{ event.name }}
           {{ event.lecturerNames }}
           {{ event.moduleNumber }}
           <v-btn
             @click="
               () => {
-                selectedEvents = selectedEvents.filter(
-                  (e) => e.id !== event.id
-                );
+                selectedEvents.delete(event.id);
               }
             "
           >
@@ -52,7 +50,11 @@
       </template>
 
       <template v-slot:item.actions="{ item }">
-        <v-btn @click="() => selectedEvents.push(item)" color="primary" small>
+        <v-btn
+          @click="() => selectedEvents.set(item.id, item)"
+          color="primary"
+          small
+        >
           Add
         </v-btn>
       </template>
@@ -83,7 +85,7 @@ import { useAsyncState } from "@vueuse/core";
 import { VDataTable } from "vuetify/components";
 
 // State
-const selectedEvents = ref<Event[]>([]);
+const selectedEvents = reactive(new Map<number, Event>());
 const search = ref("");
 
 // Table headers
@@ -112,7 +114,7 @@ const loadItems: VDataTable["$props"]["onUpdate:options"] = (args) => {
 const icalUrl = computed(() => {
   return (
     window.location.origin +
-    `/api/classes?classes=${selectedEvents.value
+    `/api/classes?classes=${[...selectedEvents.values()]
       .map((event) => event.id)
       .join(",")}`
   );
