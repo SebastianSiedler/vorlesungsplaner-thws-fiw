@@ -30,7 +30,7 @@
     <!-- Button to download iCal -->
     <v-btn @click="downloadCalendar">Download iCal</v-btn>
 
-    <v-input v-model="query" label="Query"></v-input>
+    <v-text-field label="Query" v-model="query"></v-text-field>
 
     <v-list>
       <v-list-item v-for="event in events.state.value" :key="event.id">
