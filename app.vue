@@ -137,11 +137,11 @@ const search = ref("");
 
 // Table headers
 const headers: VDataTable["$props"]["headers"] = [
-  { title: "Event Name", value: "name" },
-  { title: "Lecturer", value: "lecturerNames" },
+  { title: "Veranstaltung", value: "name" },
+  { title: "Dozent(en)", value: "lecturerNames" },
   { title: "Module Number", value: "moduleNumber" },
-  { title: "studyGroups", value: "studyGroups" },
-  { title: "upcomingSubEventDate", value: "upcomingSubEventDate" },
+  { title: "Studiengänge", value: "studyGroups" },
+  { title: "Nächster Termin	", value: "upcomingSubEventDate" },
   { title: "Actions", value: "actions", sortable: false },
 ];
 
