@@ -1,4 +1,3 @@
-// server/api/classes.ts
 import { defineEventHandler, getQuery } from "h3";
 import ical, { ICalEventData } from "ical-generator";
 import { client } from "~/fiwClient"; // Importiere die client.ts Datei
@@ -20,8 +19,6 @@ export default defineEventHandler(async (event) => {
   }
 
   const { classes } = parsedQuery.data;
-
-  // Get the class IDs from the query string
   const classIds = classes.split(",");
 
   // Create a new iCal instance
@@ -36,44 +33,54 @@ export default defineEventHandler(async (event) => {
     },
   });
 
-  // Fetch events for each class ID
-  for (const classId of classIds) {
-    try {
-      const eventData = await client.getEventById(Number(classId)); // Fetch the event data
-      const subEvents = await client.getSubEvents(Number(classId)); // Fetch sub-events
+  try {
+    // Fetch all events and sub-events in parallel
+    await Promise.all(
+      classIds.map(async (classId) => {
+        try {
+          const eventData = await client.getEventById(Number(classId));
+          const subEvents = await client.getSubEvents(Number(classId));
 
-      // Add each sub-event to the calendar
-      for (const subEvent of subEvents) {
-        const detailedSubEvent = await client.getSubEventById(
-          Number(classId),
-          subEvent.id
-        );
-        const eventDetails: ICalEventData = {
-          start: detailedSubEvent.startTime,
-          end: detailedSubEvent.endTime,
-          summary: eventData.name,
-          description: `Dozent: ${eventData.lecturerNames}`,
-          location: detailedSubEvent.rooms,
-          url: eventData.icalUrl.href,
-        };
+          // Fetch all sub-event details in parallel
+          const subEventDetails = await Promise.all(
+            subEvents.map((subEvent) =>
+              client.getSubEventById(Number(classId), subEvent.id)
+            )
+          );
 
-        calendar.createEvent(eventDetails);
-      }
-    } catch (error) {
-      console.error(`Error fetching event with ID ${classId}:`, error);
-      return {
-        status: 500,
-        message: "Error fetching events.",
-      };
-    }
+          // Add each sub-event to the calendar
+          subEventDetails.forEach((detailedSubEvent) => {
+            const eventDetails: ICalEventData = {
+              start: detailedSubEvent.startTime,
+              end: detailedSubEvent.endTime,
+              summary: eventData.name,
+              description: `Dozent: ${eventData.lecturerNames}`,
+              location: detailedSubEvent.rooms,
+              url: eventData.icalUrl.href,
+            };
+
+            calendar.createEvent(eventDetails);
+          });
+        } catch (error) {
+          console.error(`Error fetching event with ID ${classId}:`, error);
+          throw new Error(`Error fetching event with ID ${classId}`);
+        }
+      })
+    );
+
+    // Return the iCal content
+    event.node.res.setHeader("Content-Type", "text/calendar;charset=UTF-8");
+    event.node.res.setHeader(
+      "Content-Disposition",
+      'attachment; filename="vorlesungsplan.ics"'
+    );
+
+    return calendar.toString(); // Returns iCal data as string
+  } catch (error) {
+    console.error("Error fetching events or sub-events:", error);
+    return {
+      status: 500,
+      message: "Error fetching events.",
+    };
   }
-
-  // Return the iCal content
-  event.node.res.setHeader("Content-Type", "text/calendar;charset=UTF-8");
-  event.node.res.setHeader(
-    "Content-Disposition",
-    'attachment; filename="vorlesungsplan.ics"'
-  );
-
-  return calendar.toString(); // Returns iCal data as string
 });
