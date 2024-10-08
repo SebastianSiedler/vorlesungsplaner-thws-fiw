@@ -49,6 +49,11 @@ export default defineEventHandler(async (event) => {
             )
           );
 
+          const startTime = DateTime.fromISO(subEventDetails[0].startTime)
+            .setZone("Europe/Berlin")
+            .toJSDate();
+          console.log("startTime", subEventDetails[0].startTime, startTime);
+
           // Add each sub-event to the calendar
           subEventDetails.forEach((detailedSubEvent) => {
             const eventDetails: ICalEventData = {
