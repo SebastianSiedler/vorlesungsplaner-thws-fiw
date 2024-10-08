@@ -2,22 +2,31 @@
   <div>
     <div>
       <div class="">Selected Events</div>
-      <v-list>
-        <v-list-item v-for="event in selectedEvents.values()" :key="event.id">
-          {{ event.name }}
-          {{ event.lecturerNames }}
-          {{ event.moduleNumber }}
+
+      <v-data-table
+        :headers="headers"
+        :items="[...selectedEvents.values()]"
+        item-value="id"
+        hide-default-footer
+      >
+        <template v-slot:item.actions="{ item }">
           <v-btn
-            @click="
-              () => {
-                selectedEvents.delete(event.id);
-              }
-            "
+            @click="() => selectedEvents.delete(item.id)"
+            color="error"
+            small
           >
             Remove
           </v-btn>
-        </v-list-item>
-      </v-list>
+        </template>
+
+        <template v-slot:item.studyGroups="{ value }">
+          <div>
+            <v-chip v-for="group in value.split(',')">
+              {{ group }}
+            </v-chip>
+          </div>
+        </template>
+      </v-data-table>
     </div>
 
     <!-- Textbox to copy ical url -->
@@ -51,11 +60,20 @@
 
       <template v-slot:item.actions="{ item }">
         <v-btn
+          v-if="!selectedEvents.has(item.id)"
           @click="() => selectedEvents.set(item.id, item)"
           color="primary"
           small
         >
           Add
+        </v-btn>
+        <v-btn
+          v-else
+          @click="() => selectedEvents.delete(item.id)"
+          color="error"
+          small
+        >
+          Remove
         </v-btn>
       </template>
 
