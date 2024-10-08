@@ -29,6 +29,11 @@ export default defineEventHandler(async (event) => {
     name: "Vorlesungsplan",
     timezone: "Europe/Berlin",
     description: "Vorlesungsplan für die angegebenen Klassen",
+    prodId: {
+      company: "THWS Student",
+      product: "ical-generator",
+      language: "DE",
+    },
   });
 
   // Fetch events for each class ID
