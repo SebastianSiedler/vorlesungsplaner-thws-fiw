@@ -30,25 +30,27 @@
             </template>
 
             <template v-slot:no-data>
-              Bitte füge erst einige Kurse hinzu!</template
-            >
+              <span> Bitte füge erst einige Kurse hinzu! </span>
+            </template>
           </v-data-table>
         </div>
 
-        <!-- Textbox to copy ical url -->
-        <div>
-          <span> {{ icalUrl }} </span>
-          <v-icon @click="copyIcalUrl"> mdi-content-copy </v-icon>
-        </div>
+        <div v-if="selectedEvents.size > 0">
+          <!-- Textbox to copy ical url -->
+          <div>
+            <span> {{ icalUrl }} </span>
+            <v-icon @click="copyIcalUrl"> mdi-content-copy </v-icon>
+          </div>
 
-        <!-- Button to download iCal -->
-        <v-btn
-          @click="downloadCalendar"
-          color="primary"
-          append-icon="mdi-download"
-        >
-          Download iCal
-        </v-btn>
+          <!-- Button to download iCal -->
+          <v-btn
+            @click="downloadCalendar"
+            color="primary"
+            append-icon="mdi-download"
+          >
+            Download iCal
+          </v-btn>
+        </div>
 
         <!-- Vuetify Data Table to show events -->
         <v-data-table
