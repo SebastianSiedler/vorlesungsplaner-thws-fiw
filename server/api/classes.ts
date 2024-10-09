@@ -52,12 +52,12 @@ export default defineEventHandler(async (event) => {
           // Add each sub-event to the calendar
           subEventDetails.forEach((detailedSubEvent) => {
             const eventDetails: ICalEventData = {
-              start: DateTime.fromISO(detailedSubEvent.startTime)
-                .setZone("Europe/Berlin")
-                .toJSDate(),
-              end: DateTime.fromISO(detailedSubEvent.endTime)
-                .setZone("Europe/Berlin")
-                .toJSDate(),
+              start: DateTime.fromISO(detailedSubEvent.startTime).setZone(
+                "Europe/Berlin"
+              ),
+              end: DateTime.fromISO(detailedSubEvent.endTime).setZone(
+                "Europe/Berlin"
+              ),
               summary: eventData.name,
               description: `Dozent: ${eventData.lecturerNames}`,
               location: detailedSubEvent.rooms,
