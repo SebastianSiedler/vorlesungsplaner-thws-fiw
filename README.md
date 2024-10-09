@@ -15,6 +15,13 @@ This small web application allows users to export selected lectures at FHWS in t
 ![Google Calendar Setup](docs/gcal_setup.png)
 ![Google Calendar View of Events](docs/gcal_events.png)
 
+### Apple Calendar Integration
+
+`Ablage` -> `Neues Kalenderabonnement...`
+
+![Apple Calendar Setup 1](docs/apple_cal_setup_1.png)
+![GApple Calendar Setup 2](docs/apple_cal_setup_2.png)
+
 ## Contributing
 
 ### Development
