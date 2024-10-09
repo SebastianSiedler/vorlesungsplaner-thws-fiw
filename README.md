@@ -1,75 +1,50 @@
-# Nuxt 3 Minimal Starter
+# Vorlesungsplaner
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Deployed at [https://vorlesungsplaner.vercel.app/](https://vorlesungsplaner.vercel.app/)
 
-## Setup
+This is an updated version of [Vorlesungsplaner](https://github.com/Sebb767/Vorlesungsplaner).
 
-Make sure to install the dependencies:
+This small web application allows users to export selected lectures at FHWS in the iCal format. Additionally, it is possible to subscribe to the calendar URL in external calendars to stay informed about any changes to the lectures.
+
+## Usage
+
+![Vorlesungsplaner Setup](docs/planner_setup.png)
+
+### Google Calendar Integration
+
+![Google Calendar Setup](docs/gcal_setup.png)
+![Google Calendar View of Events](docs/gcal_events.png)
+
+## Contributing
+
+### Development
+
+To set up the development environment:
 
 ```bash
-# npm
-npm install
-
-# pnpm
 pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
+pnpm dev
 ```
 
-## Development Server
+### Production
 
-Start the development server on `http://localhost:3000`:
+To build the project for production:
 
 ```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm run dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
+pnpm build
 ```
 
-## Production
+## FAQ
 
-Build the application for production:
+### How does it work?
 
-```bash
-# npm
-npm run build
+The app is a simple frontend that fetches data from the FHWS API and converts it into an iCal file.
 
-# pnpm
-pnpm run build
+### Why is there a need for a server?
 
-# yarn
-yarn build
+A server is required to set up an endpoint with the appropriate content type in the header for downloading the calendar file:
 
-# bun
-bun run build
 ```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm run preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
+"Content-Type", "text/calendar;charset=UTF-8"
+"Content-Disposition", "'attachment; filename="vorlesungsplan.ics"'
 ```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.

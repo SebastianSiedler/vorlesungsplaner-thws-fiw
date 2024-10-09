@@ -10,9 +10,20 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@touch4it/ical-timezones": "^1.9.0",
+    "@vueuse/core": "^11.1.0",
+    "axios": "^1.7.7",
+    "ical-generator": "^8.0.0",
+    "luxon": "^3.5.0",
     "nuxt": "^3.13.0",
     "vue": "latest",
-    "vue-router": "latest"
+    "vue-router": "latest",
+    "vuetify": "^3.7.2",
+    "vuetify-nuxt-module": "^0.18.3",
+    "zod": "^3.23.8"
   },
-  "packageManager": "pnpm@9.12.1+sha512.e5a7e52a4183a02d5931057f7a0dbff9d5e9ce3161e33fa68ae392125b79282a8a8a470a51dfc8a0ed86221442eb2fb57019b0990ed24fab519bf0e1bc5ccfc4"
+  "packageManager": "pnpm@9.12.1+sha512.e5a7e52a4183a02d5931057f7a0dbff9d5e9ce3161e33fa68ae392125b79282a8a8a470a51dfc8a0ed86221442eb2fb57019b0990ed24fab519bf0e1bc5ccfc4",
+  "devDependencies": {
+    "@types/luxon": "^3.4.2"
+  }
 }
