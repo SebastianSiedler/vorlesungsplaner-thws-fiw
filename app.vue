@@ -3,21 +3,50 @@
     <v-main>
       <v-container>
         <div>
-          <div class="text-h5">Selected Events</div>
-
           <v-data-table
             :headers="headers"
             :items="[...selectedEvents.values()]"
             item-value="id"
             hide-default-footer
           >
+            <template v-slot:top>
+              <v-toolbar flat class="d-flex align-center pr-4">
+                <v-toolbar-title>Selected Events</v-toolbar-title>
+                <!-- Button to download iCal -->
+                <v-btn
+                  v-if="selectedEvents.size > 0"
+                  @click="downloadCalendar"
+                  color="primary"
+                  rounded
+                  variant="flat"
+                  prepend-icon="mdi-download"
+                >
+                  iCal
+                </v-btn>
+              </v-toolbar>
+            </template>
+
+            <template v-slot:headers="{ headers }">
+              <tr v-for="(header, i) in headers" :key="i">
+                <th
+                  v-for="(h, i) in header"
+                  :key="i"
+                  class="body-2 font-weight-bold"
+                >
+                  {{ h.title }}
+                </th>
+              </tr>
+            </template>
+
             <template v-slot:item.actions="{ item }">
               <v-btn
                 @click="() => selectedEvents.delete(item.id)"
                 color="error"
-                small
+                size="small"
+                icon
+                flat
               >
-                Remove
+                <v-icon icon="mdi-delete" size="large" />
               </v-btn>
             </template>
 
@@ -29,27 +58,42 @@
               </div>
             </template>
 
+            <template v-slot:item.upcomingSubEventDate="{ value }">
+              {{ formatDate(value) }}
+            </template>
+
             <template v-slot:no-data>
               <span> Bitte füge erst einige Kurse hinzu! </span>
             </template>
+
+            <template v-slot:bottom>
+              <v-row justify="end" class="mt-1">
+                <v-col v-if="selectedEvents.size > 0">
+                  <v-chip
+                    color="light-gray"
+                    append-icon="mdi-content-copy"
+                    class="px-4 py-2"
+                    :style="{
+                      whiteSpace: 'normal',
+                      overflowWrap: 'anywhere',
+                      height: 'auto',
+                    }"
+                    @click="copyIcalUrl"
+                  >
+                    <span
+                      class="text-decoration-underline"
+                      style="user-select: text"
+                    >
+                      {{ icalUrl }}
+                    </span>
+                  </v-chip>
+                  <v-snackbar v-model="copied">
+                    URL in Zwischenablage kopiert
+                  </v-snackbar>
+                </v-col>
+              </v-row>
+            </template>
           </v-data-table>
-        </div>
-
-        <div v-if="selectedEvents.size > 0">
-          <!-- Textbox to copy ical url -->
-          <div>
-            <span> {{ icalUrl }} </span>
-            <v-icon @click="copyIcalUrl"> mdi-content-copy </v-icon>
-          </div>
-
-          <!-- Button to download iCal -->
-          <v-btn
-            @click="downloadCalendar"
-            color="primary"
-            append-icon="mdi-download"
-          >
-            Download iCal
-          </v-btn>
         </div>
 
         <!-- Vuetify Data Table to show events -->
@@ -60,20 +104,37 @@
           item-value="id"
           :loading="events.isLoading.value"
           @update:options="loadItems"
+          class="mt-8"
         >
           <template v-slot:top>
-            <v-toolbar flat class="d-flex align-center">
+            <v-toolbar flat class="d-flex align-center pr-4">
               <v-toolbar-title>Classes</v-toolbar-title>
               <!-- Search Field for the Data Table -->
               <v-text-field
+                prepend-inner-icon="mdi-magnify"
                 v-model="search"
-                label="Search Events"
+                placeholder="Events suchen"
                 clearable
-                class="ma-2"
+                variant="outlined"
+                rounded
+                class="my-2"
                 density="compact"
+                color="grey"
                 hide-details
               />
             </v-toolbar>
+          </template>
+
+          <template v-slot:headers="{ headers }">
+            <tr v-for="(header, i) in headers" :key="i">
+              <th
+                v-for="(h, i) in header"
+                :key="i"
+                class="body-2 font-weight-bold"
+              >
+                {{ h.title }}
+              </th>
+            </tr>
           </template>
 
           <template v-slot:item.actions="{ item }">
@@ -81,17 +142,22 @@
               v-if="!selectedEvents.has(item.id)"
               @click="() => selectedEvents.set(item.id, item)"
               color="primary"
-              small
+              size="small"
+              icon
+              flat
             >
-              Add
+              <v-icon icon="mdi-plus" size="x-large" />
             </v-btn>
+
             <v-btn
               v-else
               @click="() => selectedEvents.delete(item.id)"
               color="error"
-              small
+              size="small"
+              icon
+              flat
             >
-              Remove
+              <v-icon icon="mdi-delete" size="large" />
             </v-btn>
           </template>
 
@@ -104,7 +170,7 @@
           </template>
 
           <template v-slot:item.upcomingSubEventDate="{ value }">
-            {{ new Date(value).toLocaleString("de") }}
+            {{ formatDate(value) }}
           </template>
 
           <template v-slot:loading>
@@ -113,8 +179,8 @@
         </v-data-table>
 
         <div>
-          © {{ new Date().getFullYear() }} Sebastian Siedler · Lizensiert unter
-          der MIT Linzenz · Source auf
+          © {{ new Date().getFullYear() }} Sebastian Siedler · Lizenziert unter
+          der MIT Lizenz · Source auf
           <a
             href="https://github.com/SebastianSiedler/vorlesungsplaner-thws-fiw"
             target="_blank"
@@ -128,7 +194,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref } from "vue";
 import { client, type Event } from "./fiwClient";
 import { useAsyncState, useClipboard } from "@vueuse/core";
 import { VDataTable } from "vuetify/components";
@@ -169,7 +235,7 @@ const icalUrl = computed(() => {
   );
 });
 
-const { text, copy, copied, isSupported } = useClipboard({ source: icalUrl });
+const { copy, copied } = useClipboard({ source: icalUrl });
 
 const copyIcalUrl = async () => {
   await copy();
@@ -179,5 +245,10 @@ const copyIcalUrl = async () => {
 };
 const downloadCalendar = () => {
   window.location.href = icalUrl.value;
+};
+
+// convert date to local string
+const formatDate = (date: string) => {
+  return new Date(date).toLocaleString("de");
 };
 </script>
