@@ -97,11 +97,13 @@
         </div>
 
         <!-- Vuetify Data Table to show events -->
-        <v-data-table
+        <v-data-table-server
           :headers="headers"
-          :items="events.state.value"
+          :items="events.state.value?.events || []"
           :search="search"
           item-value="id"
+          :items-length="events.state.value?.headers?.totalNumberOfResults ?? 0"
+          v-model:items-per-page="itemsPerPage"
           :loading="events.isLoading.value"
           @update:options="loadItems"
           class="mt-8"
@@ -174,9 +176,11 @@
           </template>
 
           <template v-slot:loading>
-            <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
+            <v-skeleton-loader
+              :type="`table-row@${itemsPerPage}`"
+            ></v-skeleton-loader>
           </template>
-        </v-data-table>
+        </v-data-table-server>
 
         <div>
           © {{ new Date().getFullYear() }} Sebastian Siedler · Lizenziert unter
@@ -198,10 +202,12 @@ import { ref } from "vue";
 import { client, type Event } from "./fiwClient";
 import { useAsyncState, useClipboard } from "@vueuse/core";
 import { VDataTable } from "vuetify/components";
+import { z } from "zod";
 
 // State
 const selectedEvents = reactive(new Map<number, Event>());
 const search = ref("");
+const itemsPerPage = ref(10);
 
 // Table headers
 const headers: VDataTable["$props"]["headers"] = [
@@ -214,14 +220,26 @@ const headers: VDataTable["$props"]["headers"] = [
 ];
 
 // API call to fetch events
-const events = useAsyncState(client.getEvents, [], { throwError: true });
+const events = useAsyncState(client.getEvents, null, {
+  throwError: true,
+  immediate: false,
+  resetOnExecute: false,
+});
 
 const loadItems: VDataTable["$props"]["onUpdate:options"] = (args) => {
-  const { page, itemsPerPage, search } = args;
-  console.log(args);
+  const parsedArgs = z
+    .object({
+      page: z.number(),
+      itemsPerPage: z.number(),
+      search: z.string(),
+    })
+    .parse(args);
+
+  const { page, itemsPerPage, search } = parsedArgs;
+
   events.execute(0, {
     q: search,
-    size: itemsPerPage === -1 ? 1000 : itemsPerPage,
+    size: itemsPerPage,
     offset: (page - 1) * itemsPerPage,
   });
 };
