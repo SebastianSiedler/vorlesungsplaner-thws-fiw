@@ -88,7 +88,7 @@ export const client = {
         "x-totalnumberofresults": z.coerce.number().min(0),
         "x-numberofresults": z.coerce.number().min(0),
       })
-      .parse(response.headers.toJSON());
+      .parse(response.headers);
 
     // Zod zur Validierung der Antwort verwenden
     return {
