@@ -1,0 +1,25 @@
+{
+  "selectedEvents": "Ausgewählte Veranstaltungen",
+  "allEvents": "Alle Veranstaltungen",
+  "searchEvents": "Events suchen",
+  "eventTable": {
+    "header": {
+      "event": "Event",
+      "lecturer(s)": "Dozent(en)",
+      "moduleNumber": "Modulnummer",
+      "studyPrograms": "Studiengänge",
+      "nextDate": "Nächster Termin",
+      "actions": "Aktionen"
+    },
+    "message": {
+      "pleaseAddSomeEventsFirst": "Bitte füge erst einige Kurse hinzu!"
+    }
+  },
+  "snackbar": {
+    "urlCopiedToClipboard": "URL in die Zwischenablage kopiert"
+  },
+  "footer": {
+    "licensedUnderTheMITLicense": "Lizenziert unter der MIT-Lizenz",
+    "sourceCodeOn": "Quellcode auf"
+  }
+}

@@ -10,6 +10,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@nuxtjs/i18n": "^8.5.5",
     "@touch4it/ical-timezones": "^1.9.0",
     "@vueuse/core": "^11.1.0",
     "axios": "^1.7.7",
