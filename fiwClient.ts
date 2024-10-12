@@ -82,8 +82,22 @@ export const client = {
   // Fetch für getEvents
   getEvents: async (params: { q?: string; offset?: number; size?: number }) => {
     const response = await axiosInstance.get("/events", { params });
+
+    const headers = z
+      .object({
+        "x-totalnumberofresults": z.coerce.number().min(0),
+        "x-numberofresults": z.coerce.number().min(0),
+      })
+      .parse(response.headers.toJSON());
+
     // Zod zur Validierung der Antwort verwenden
-    return EventsListSchema.parse(response.data);
+    return {
+      events: EventsListSchema.parse(response.data),
+      headers: {
+        totalNumberOfResults: headers["x-totalnumberofresults"],
+        numberOfResults: headers["x-numberofresults"],
+      },
+    };
   },
 
   // Fetch für ein einzelnes Event (getEventById)
