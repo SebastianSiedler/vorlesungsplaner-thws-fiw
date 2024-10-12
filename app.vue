@@ -223,10 +223,11 @@ const headers: VDataTable["$props"]["headers"] = [
 const events = useAsyncState(client.getEvents, null, {
   throwError: true,
   immediate: false,
+  resetOnExecute: false,
 });
 
 const loadItems: VDataTable["$props"]["onUpdate:options"] = (args) => {
-  const { page, itemsPerPage, search } = z
+  const parsedArgs = z
     .object({
       page: z.number(),
       itemsPerPage: z.number(),
@@ -234,7 +235,7 @@ const loadItems: VDataTable["$props"]["onUpdate:options"] = (args) => {
     })
     .parse(args);
 
-  console.log(args);
+  const { page, itemsPerPage, search } = parsedArgs;
 
   events.execute(0, {
     q: search,
