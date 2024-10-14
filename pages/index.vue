@@ -208,6 +208,8 @@ import { useAsyncState, useClipboard } from "@vueuse/core";
 import type { VDataTable } from "vuetify/components";
 import { z } from "zod";
 
+const route = useRoute();
+const router = useRouter();
 const { t } = useI18n();
 
 // State
@@ -282,26 +284,24 @@ watch(selectedEvents, () => {
   const selectedEventIds = [...selectedEvents.values()].map(
     (event) => event.id
   );
-  const url = new URL(window.location.href);
-  if (selectedEventIds.length === 0) {
-    url.searchParams.delete("events");
-  } else {
-    url.searchParams.set("events", selectedEventIds.join(","));
-  }
-  window.history.replaceState({}, "", url.toString());
+
+  router.push({ query: { events: selectedEventIds } });
 });
 
 // load all valid events that are in the URL
-onMounted(() => {
-  const url = new URL(window.location.href);
-  const events = url.searchParams.get("events");
-  if (events) {
-    const eventIds = events.split(",").map(Number);
-    client.getEventsByIds(eventIds).then((events) => {
-      events.forEach((event) => {
+onMounted(async () => {
+  const eventIds = z.coerce
+    .number()
+    .array()
+    .parse(route.query.events ?? []);
+
+  await Promise.all(
+    eventIds.map(async (id) => {
+      const event = await client.getEventById(id).catch(console.error);
+      if (event) {
         selectedEvents.set(event.id, event);
-      });
-    });
-  }
+      }
+    })
+  );
 });
 </script>
