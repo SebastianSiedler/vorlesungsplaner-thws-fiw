@@ -203,7 +203,7 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { client, type Event } from "./fiwClient";
+import { client, type Event } from "../fiwClient";
 import { useAsyncState, useClipboard } from "@vueuse/core";
 import { VDataTable } from "vuetify/components";
 import { z } from "zod";
