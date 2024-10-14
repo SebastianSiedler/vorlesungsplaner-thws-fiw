@@ -1,0 +1,25 @@
+{
+  "selectedEvents": "Selected Events",
+  "allEvents": "All Events",
+  "searchEvents": "Search Events",
+  "eventTable": {
+    "header": {
+      "event": "Event",
+      "lecturer(s)": "Lecturer(s)",
+      "moduleNumber": "Module Number",
+      "studyPrograms": "Study Programs",
+      "nextDate": "Next Date",
+      "actions": "Actions"
+    },
+    "message": {
+      "pleaseAddSomeEventsFirst": "Please add some events first!"
+    }
+  },
+  "snackbar": {
+    "urlCopiedToClipboard": "URL copied to clipboard"
+  },
+  "footer": {
+    "licensedUnderTheMITLicense": "Licensed under the MIT License",
+    "sourceCodeOn": "Source Code on"
+  }
+}
