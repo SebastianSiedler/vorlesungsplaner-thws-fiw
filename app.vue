@@ -106,6 +106,7 @@
           item-value="id"
           :items-length="events.state.value?.headers?.totalNumberOfResults ?? 0"
           v-model:items-per-page="itemsPerPage"
+          :items-per-page-options="itemsPerPageOptions"
           :loading="events.isLoading.value"
           @update:options="loadItems"
           class="mt-8"
@@ -212,6 +213,7 @@ const { t } = useI18n();
 const selectedEvents = reactive(new Map<number, Event>());
 const search = ref("");
 const itemsPerPage = ref(10);
+const itemsPerPageOptions = [5, 10, 15, 20];
 
 // Table headers
 const headers = computed<VDataTable["$props"]["headers"]>(() => [
