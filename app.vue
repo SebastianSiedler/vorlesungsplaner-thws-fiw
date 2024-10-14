@@ -275,4 +275,32 @@ const downloadCalendar = () => {
 const formatDate = (date: string) => {
   return new Date(date).toLocaleString("de");
 };
+
+// add selected events to URL
+watch(selectedEvents, () => {
+  const selectedEventIds = [...selectedEvents.values()].map(
+    (event) => event.id
+  );
+  const url = new URL(window.location.href);
+  if (selectedEventIds.length === 0) {
+    url.searchParams.delete("events");
+  } else {
+    url.searchParams.set("events", selectedEventIds.join(","));
+  }
+  window.history.replaceState({}, "", url.toString());
+});
+
+// load all valid events that are in the URL
+onMounted(() => {
+  const url = new URL(window.location.href);
+  const events = url.searchParams.get("events");
+  if (events) {
+    const eventIds = events.split(",").map(Number);
+    client.getEventsByIds(eventIds).then((events) => {
+      events.forEach((event) => {
+        selectedEvents.set(event.id, event);
+      });
+    });
+  }
+});
 </script>

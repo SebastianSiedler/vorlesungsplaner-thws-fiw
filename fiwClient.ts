@@ -107,6 +107,25 @@ export const client = {
     return SingleEventSchema.parse(response.data);
   },
 
+  // fetch multiple events by their ids
+  getEventsByIds: async (ids: number[]) => {
+    // load all events in parallel
+    const responses = await Promise.all(
+      ids.map(async (id) => {
+        try {
+          const response = await axiosInstance.get(`/events/${id}`);
+          // validate the response and return the parsed data
+          return EventSchema.parse(response.data);
+        } catch {
+          // if the request fails (e.g. 404 not found), return null
+          return null;
+        }
+      })
+    );
+    // filter out invalid responses (e.g. 404 not found)
+    return responses.filter((data) => data !== null);
+  },
+
   // Fetch für Sub-Events eines Events (getSubEvents)
   getSubEvents: async (id: number) => {
     const response = await axiosInstance.get(`/events/${id}/subevents`);
