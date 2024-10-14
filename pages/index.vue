@@ -205,8 +205,9 @@
 import { ref } from "vue";
 import { client, type Event } from "../fiwClient";
 import { useAsyncState, useClipboard } from "@vueuse/core";
-import { VDataTable } from "vuetify/components";
+import type { VDataTable } from "vuetify/components";
 import { z } from "zod";
+
 const { t } = useI18n();
 
 // State
