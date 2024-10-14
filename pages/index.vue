@@ -290,10 +290,11 @@ watch(selectedEvents, () => {
 
 // load all valid events that are in the URL
 onMounted(async () => {
+  const events = route.query.events;
   const eventIds = z.coerce
     .number()
     .array()
-    .parse(route.query.events ?? []);
+    .parse(typeof events === "string" ? [events] : events ?? []);
 
   await Promise.all(
     eventIds.map(async (id) => {
