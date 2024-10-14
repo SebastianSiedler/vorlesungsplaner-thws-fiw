@@ -285,24 +285,29 @@ watch(selectedEvents, () => {
     (event) => event.id
   );
 
-  router.push({ query: { events: selectedEventIds } });
+  router.replace({ query: { ...route.query, events: selectedEventIds } });
 });
 
-// load all valid events that are in the URL
 onMounted(async () => {
+  // load all valid events that are in the URL
   const events = route.query.events;
-  const eventIds = z.coerce
-    .number()
-    .array()
-    .parse(typeof events === "string" ? [events] : events ?? []);
+  try {
+    const eventIds = z.coerce
+      .number()
+      .array()
+      .parse(typeof events === "string" ? [events] : events ?? []);
 
-  await Promise.all(
-    eventIds.map(async (id) => {
-      const event = await client.getEventById(id).catch(console.error);
-      if (event) {
-        selectedEvents.set(event.id, event);
-      }
-    })
-  );
+    await Promise.all(
+      eventIds.map(async (id) => {
+        const event = await client.getEventById(id).catch(console.error);
+        if (event) {
+          selectedEvents.set(event.id, event);
+        }
+      })
+    );
+  } catch {
+    console.error("Invalid event IDs in URL query parameter 'events'");
+    router.push({ query: { ...route.query, events: undefined } });
+  }
 });
 </script>
