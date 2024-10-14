@@ -11,7 +11,7 @@
           >
             <template v-slot:top>
               <v-toolbar flat class="d-flex align-center pr-4">
-                <v-toolbar-title>Selected Events</v-toolbar-title>
+                <v-toolbar-title>{{ $t("selectedEvents") }}</v-toolbar-title>
                 <!-- Button to download iCal -->
                 <v-btn
                   v-if="selectedEvents.size > 0"
@@ -63,7 +63,9 @@
             </template>
 
             <template v-slot:no-data>
-              <span> Bitte füge erst einige Kurse hinzu! </span>
+              <span>
+                {{ $t("eventTable.message.pleaseAddSomeEventsFirst") }}
+              </span>
             </template>
 
             <template v-slot:bottom>
@@ -88,7 +90,7 @@
                     </span>
                   </v-chip>
                   <v-snackbar v-model="copied">
-                    URL in Zwischenablage kopiert
+                    {{ $t("snackbar.urlCopiedToClipboard") }}
                   </v-snackbar>
                 </v-col>
               </v-row>
@@ -104,18 +106,19 @@
           item-value="id"
           :items-length="events.state.value?.headers?.totalNumberOfResults ?? 0"
           v-model:items-per-page="itemsPerPage"
+          :items-per-page-options="itemsPerPageOptions"
           :loading="events.isLoading.value"
           @update:options="loadItems"
           class="mt-8"
         >
           <template v-slot:top>
             <v-toolbar flat class="d-flex align-center pr-4">
-              <v-toolbar-title>Classes</v-toolbar-title>
+              <v-toolbar-title>{{ $t("allEvents") }}</v-toolbar-title>
               <!-- Search Field for the Data Table -->
               <v-text-field
                 prepend-inner-icon="mdi-magnify"
                 v-model="search"
-                placeholder="Events suchen"
+                :placeholder="$t('searchEvents')"
                 clearable
                 variant="outlined"
                 rounded
@@ -183,8 +186,9 @@
         </v-data-table-server>
 
         <div>
-          © {{ new Date().getFullYear() }} Sebastian Siedler · Lizenziert unter
-          der MIT Lizenz · Source auf
+          © {{ new Date().getFullYear() }} Sebastian Siedler ·
+          {{ $t("footer.licensedUnderTheMITLicense") }} ·
+          {{ $t("footer.sourceCodeOn") }}
           <a
             href="https://github.com/SebastianSiedler/vorlesungsplaner-thws-fiw"
             target="_blank"
@@ -203,21 +207,23 @@ import { client, type Event } from "./fiwClient";
 import { useAsyncState, useClipboard } from "@vueuse/core";
 import { VDataTable } from "vuetify/components";
 import { z } from "zod";
+const { t } = useI18n();
 
 // State
 const selectedEvents = reactive(new Map<number, Event>());
 const search = ref("");
 const itemsPerPage = ref(10);
+const itemsPerPageOptions = [5, 10, 15, 20];
 
 // Table headers
-const headers: VDataTable["$props"]["headers"] = [
-  { title: "Veranstaltung", value: "name" },
-  { title: "Dozent(en)", value: "lecturerNames" },
-  { title: "Module Number", value: "moduleNumber" },
-  { title: "Studiengänge", value: "studyGroups" },
-  { title: "Nächster Termin	", value: "upcomingSubEventDate" },
-  { title: "Actions", value: "actions", sortable: false },
-];
+const headers = computed<VDataTable["$props"]["headers"]>(() => [
+  { title: t("eventTable.header.event"), value: "name" },
+  { title: t("eventTable.header.lecturer(s)"), value: "lecturerNames" },
+  { title: t("eventTable.header.moduleNumber"), value: "moduleNumber" },
+  { title: t("eventTable.header.studyPrograms"), value: "studyGroups" },
+  { title: t("eventTable.header.nextDate"), value: "upcomingSubEventDate" },
+  { title: t("eventTable.header.actions"), value: "actions", sortable: false },
+]);
 
 // API call to fetch events
 const events = useAsyncState(client.getEvents, null, {
